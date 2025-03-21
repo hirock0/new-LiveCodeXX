@@ -42,6 +42,7 @@ const languageOptions = {
   sql: { id: 82, name: "SQL" },
 } as const;
 
+
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
   const [language, setLanguage] = useState<keyof typeof languageOptions>("javascript");
@@ -62,6 +63,7 @@ export default function Home() {
     }
 
     const languageId = languageOptions[language].id;
+
     const requestData = { source_code: code, language_id: languageId, stdin: "" };
 
     try {
@@ -79,7 +81,6 @@ export default function Home() {
           },
         }
       );
-
       const token = response.data.token;
 
       const fetchOutput = async () => {
@@ -105,7 +106,6 @@ export default function Home() {
           setIsLoading(false);
         }
       };
-
       fetchOutput();
     } catch (error: any) {
       if (error.response?.status === 429) {
