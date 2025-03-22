@@ -7,7 +7,6 @@ import Banner from "../component/Banner";
 import Courses from "@/component/Courses";
 import Testimonials from "@/component/Testimonials";
 import Feature from "@/component/Feature";
-
 const languageOptions = {
   javascript: { id: 63, name: "JavaScript", extension: "js" },
   python: { id: 71, name: "Python", extension: "py" },
@@ -41,34 +40,26 @@ const languageOptions = {
   sql: { id: 82, name: "SQL", extension: "sql" },
 } as const;
 
-
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
   const [language, setLanguage] = useState<keyof typeof languageOptions>("javascript");
   const [code, setCode] = useState<string>("");
   const [output, setOutput] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
   const API_KEY = process.env.NEXT_PUBLIC_RAPIDAPI_KEY || ""; // Load API key from .env
-
   useEffect(() => {
     setIsClient(true);
   }, []);
-
   const runCode = async () => {
     if (!API_KEY) {
       setOutput("Error: API Key is missing. Set NEXT_PUBLIC_RAPIDAPI_KEY in .env.local");
       return;
     }
-
     const languageId = languageOptions[language].id;
-
     const requestData = { source_code: code, language_id: languageId, stdin: "" };
-
     try {
       setOutput("Running...");
       setIsLoading(true);
-
       const response = await axios.post(
         "https://judge0-ce.p.rapidapi.com/submissions",
         requestData,
@@ -81,7 +72,6 @@ export default function Home() {
         }
       );
       const token = response.data.token;
-
       const fetchOutput = async () => {
         try {
           const result = await axios.get(
@@ -93,7 +83,6 @@ export default function Home() {
               },
             }
           );
-
           if (result.data.status.id <= 2) {
             setTimeout(fetchOutput, 5000); // Increased delay to 5s to avoid rate limits
           } else {
@@ -115,7 +104,6 @@ export default function Home() {
       setIsLoading(false);
     }
   };
-
   const downloadCode = () => {
     const fileExtension = languageOptions[language].extension;
     const fileName = `code.${fileExtension}`;
@@ -127,7 +115,6 @@ export default function Home() {
     link.click();
     document.body.removeChild(link);
   };
-
   const uploadCode = (event:any) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -138,11 +125,9 @@ export default function Home() {
       reader.readAsText(file);
     }
   };
-
   if (!isClient) {
     return <p className="text-center text-gray-500">Loading...</p>;
   }
-
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold text-center p-4">Multi-Language Code Editor</h1>
@@ -152,7 +137,6 @@ export default function Home() {
           selectedLanguage={language}
           onChange={(lang) => setLanguage(lang as keyof typeof languageOptions)}
         />
-
         <CodeEditor language={language} value={code} onChange={(value) => setCode(value ?? "")} />
 
         <div className="flex space-x-3 mt-3">
